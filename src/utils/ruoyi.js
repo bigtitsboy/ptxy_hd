@@ -68,7 +68,7 @@ export function addDateRange(params, dateRange, propName) {
   return search;
 }
 
-// 回显数据字典 
+// 回显数据字典
 export function selectDictLabel(datas, value) {
   var actions = [];
   Object.keys(datas).some((key) => {
@@ -222,4 +222,11 @@ export async function blobValidate(data) {
   } catch (error) {
     return true;
   }
+}
+
+import defaultImg from '@/assets/images/default_photo.jpg'
+
+// 图片找不到处理
+export function setErrorImg() {
+  return defaultImg
 }
