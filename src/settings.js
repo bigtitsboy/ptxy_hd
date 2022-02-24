@@ -1,5 +1,5 @@
 module.exports = {
-  title: '校园生活服务系统',
+  title: 'demo',
   /**
    * 侧边栏主题 深色主题theme-dark，浅色主题theme-light
    */

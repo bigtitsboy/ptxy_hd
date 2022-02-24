@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 查询商品分类列表
+export function listGoodsCategory(query) {
+  return request({
+    url: '/goods/goodsCategory/list',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询店铺商品列表
 export function listShopGoods(query) {
   return request({

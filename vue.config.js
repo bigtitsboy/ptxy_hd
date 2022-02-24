@@ -8,7 +8,7 @@ function resolve(dir) {
 
 const CompressionPlugin = require('compression-webpack-plugin')
 
-const name = defaultSettings.title || '校园生活服务系统' // 标题
+const name = defaultSettings.title || 'demo' // 标题
 
 const port = process.env.port || process.env.npm_config_port || 80 // 端口
 

@@ -10,14 +10,17 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="分类ID" prop="categoryId">
-        <el-input
-          v-model="queryParams.categoryId"
-          placeholder="请输入分类ID"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="分类" prop="categoryId">
+        <el-select v-model="queryParams.categoryId" clearable placeholder="请选择分类">
+          <el-option
+            v-for="item in goodsCategoryList"
+            :key="item.categoryId"
+            :label="item.categoryName"
+            :value="item.categoryId"
+          >
+          </el-option>
+        </el-select>
+
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -45,15 +48,18 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="商品ID" align="center" prop="goodsId"/>
       <el-table-column label="商品名称" align="center" prop="goodsName"/>
-<!--      <el-table-column label="商品描述" align="center" prop="goodsContent"/>-->
+      <!--      <el-table-column label="商品描述" align="center" prop="goodsContent"/>-->
       <el-table-column label="商品价格" align="center" prop="goodsPrice"/>
       <el-table-column label="商品数量" align="center" prop="goodsNumber"/>
-      <el-table-column label="分类ID" align="center" prop="categoryId"/>
-<!--      <el-table-column label="用户ID" align="center" prop="userId"/>-->
-<!--      <el-table-column label="手机号码" align="center" prop="phonenumber"/>-->
-<!--      <el-table-column label="图片路径id" align="center" prop="imagePathId"/>-->
-<!--      <el-table-column label="商品浏览量" align="center" prop="goodsCount"/>-->
-      <el-table-column label="商品状态" align="center" prop="status"/>
+      <el-table-column label="分类" align="center">
+        <template slot-scope="props">
+          <div>{{ categoryChange(props.row.categoryId) }}</div>
+        </template>
+      </el-table-column>
+      <!--      <el-table-column label="用户ID" align="center" prop="userId"/>-->
+      <!--      <el-table-column label="手机号码" align="center" prop="phonenumber"/>-->
+      <!--      <el-table-column label="商品浏览量" align="center" prop="goodsCount"/>-->
+      <!--      <el-table-column label="商品状态" align="center" prop="status"/>-->
       <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -86,7 +92,7 @@
     />
 
     <!-- 添加或修改店铺商品对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="商品名称" prop="goodsName">
           <el-input v-model="form.goodsName" placeholder="请输入商品名称"/>
@@ -100,50 +106,59 @@
         <el-form-item label="商品数量" prop="goodsNumber">
           <el-input v-model="form.goodsNumber" placeholder="请输入商品数量"/>
         </el-form-item>
-        <el-form-item label="分类ID" prop="categoryId">
-          <el-input v-model="form.categoryId" placeholder="请输入分类ID"/>
-        </el-form-item>
-        <el-form-item label="用户ID" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户ID"/>
-        </el-form-item>
-        <el-form-item label="手机号码" prop="phonenumber">
-          <el-input v-model="form.phonenumber" placeholder="请输入手机号码"/>
+        <el-form-item label="分类" prop="categoryId">
+          <el-select v-model="form.categoryId" clearable placeholder="请选择分类">
+            <el-option
+              v-for="item in goodsCategoryList"
+              :key="item.categoryId"
+              :label="item.categoryName"
+              :value="item.categoryId"
+            >
+            </el-option>
+          </el-select>
+
         </el-form-item>
 
-        <el-form-item class="upload-cover" label="菜单图标" prop="icon" ref="uploadmenuLogo">
+
+        <el-form-item class="upload-cover" label="商品图片" prop="icon" ref="uploadmenuLogo">
           <el-upload
             class="avatar-uploader"
             accept="image/png, image/jpg, image/jpeg"
             :action="settings.uploadUrl"
-            :headers="headers"
-            :show-file-list="false"
+            :on-remove="handleRemove"
+            :file-list="form.imageList"
             :on-success="handlePicSuccess('logo')"
             :before-upload="beforePicUpload"
+            :headers="headers"
+            :limit="2"
+            list-type="picture"
           >
-            <!--            :data="{folderName:'operateSetup',subFolderName:'menuInfo'}"-->
-            <img
-              v-if="menuLogoUrl"
-              :src="menuLogoUrl"
-              class="avatar"
-              @error="menuLogoUrl=setErrorImg()"
-            />
-            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
-          <div class="tip">
-            <div>1. 只支持png，jpg，jpeg三种格式的图片;</div>
-            <div>2. 建议上传1:1的图片，图片大小不超过1M。</div>
-          </div>
+
+          <!--          <el-upload-->
+          <!--            class="avatar-uploader"-->
+          <!--            accept="image/png, image/jpg, image/jpeg"-->
+          <!--            :action="settings.uploadUrl"-->
+          <!--            :headers="headers"-->
+          <!--            :limit="2"-->
+          <!--            :on-success="handlePicSuccess('logo')"-->
+          <!--            :before-upload="beforePicUpload"-->
+          <!--          >-->
+          <!--            <i class="el-icon-plus"></i>-->
+          <!--          </el-upload>-->
+
+          <!--          <div class="tip">-->
+          <!--            <div>1. 只支持png，jpg，jpeg三种格式的图片;</div>-->
+          <!--            <div>2. 建议上传1:1的图片，图片大小不超过1M。</div>-->
+          <!--          </div>-->
         </el-form-item>
 
-        <el-form-item label="图片路径id" prop="imagePathId">
-          <el-input v-model="form.imagePathId" placeholder="请输入图片路径id"/>
+        <el-form-item label="商品售量" prop="goodsCount">
+          <el-input v-model="form.goodsCount" placeholder="请输入商品售量"/>
         </el-form-item>
-        <el-form-item label="商品浏览量" prop="goodsCount">
-          <el-input v-model="form.goodsCount" placeholder="请输入商品浏览量"/>
-        </el-form-item>
-        <el-form-item label="删除标志" prop="delFlag">
-          <el-input v-model="form.delFlag" placeholder="请输入删除标志"/>
-        </el-form-item>
+
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
         </el-form-item>
@@ -157,13 +172,24 @@
 </template>
 
 <script>
-import { listShopGoods, getShopGoods, delShopGoods, addShopGoods, updateShopGoods } from '@/api/goods/shopGoods'
+import {
+  listShopGoods,
+  getShopGoods,
+  delShopGoods,
+  addShopGoods,
+  updateShopGoods,
+  listGoodsCategory
+} from '@/api/goods/shopGoods'
 import { getToken } from '@/utils/auth'
 
 export default {
   name: 'ShopGoods',
   data() {
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
+      // 类别列表
+      goodsCategoryList: [],
       // 上传请求头
       headers: null,
       menuLogoUrl: undefined,
@@ -196,7 +222,6 @@ export default {
         categoryId: null,
         userId: null,
         phonenumber: null,
-        imagePathId: null,
         goodsCount: null,
         status: null
       },
@@ -214,29 +239,53 @@ export default {
           { required: true, message: '商品价格不能为空', trigger: 'blur' }
         ],
         categoryId: [
-          { required: true, message: '分类ID不能为空', trigger: 'blur' }
+          { required: true, message: '分类不能为空', trigger: 'blur' }
         ],
-        userId: [
-          { required: true, message: '用户ID不能为空', trigger: 'blur' }
-        ],
-        status: [
-          { required: true, message: '商品状态不能为空', trigger: 'blur' }
+        goodsNumber: [
+          { required: true, message: '数量不能为空', trigger: 'blur' }
         ]
+        // icon: [
+        //   { required: true, message: '图片不能为空', trigger: 'blur' }
+        // ]
       }
     }
   },
   created() {
+    this.reset()
     this.getList()
     this.headers = { Authorization: 'Bearer ' + getToken() }
+    listGoodsCategory().then(res => {
+      this.goodsCategoryList = res.rows
+    })
   },
   methods: {
+    handleRemove(file, fileList) {
+      if (fileList.length === 0) {
+        this.form.imageList = []
+      } else {
+        this.form.imageList = []
+        console.log(fileList)
+        fileList.forEach(x => {
+          this.form.imageList.push({ url: x.url })
+        })
+      }
+    },
+    handlePictureCardPreview(file) {
+      this.menuLogoUrl = file.url
+      this.dialogVisible = true
+    },
+    // 分类转换
+    categoryChange(val) {
+      return this.goodsCategoryList.filter(x => x.categoryId === val)[0].categoryName
+    },
     // 图片上传成功
     handlePicSuccess(type) {
       return (res, file) => {
         if (type === 'logo') {
+          console.log(file)
           this.menuLogoUrl = URL.createObjectURL(file.raw)
           this.$refs['uploadmenuLogo'].clearValidate()
-          this.form.icon = res.url
+          this.form.imageList.push({ url: file.response.url })
         }
       }
     },
@@ -265,6 +314,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
+        imageList: [],
         goodsId: null,
         goodsName: null,
         goodsContent: null,
@@ -273,7 +323,6 @@ export default {
         categoryId: null,
         userId: null,
         phonenumber: null,
-        imagePathId: null,
         goodsCount: null,
         status: '0',
         delFlag: null,
@@ -312,7 +361,14 @@ export default {
       this.reset()
       const goodsId = row.goodsId || this.ids
       getShopGoods(goodsId).then(response => {
-        this.form = response.data
+        console.log(response)
+        this.form = { ...response.data }
+        this.form.imageList = []
+        if (response.data.imageList.length !== 0) {
+          response.data.imageList.forEach((x) => {
+            this.form.imageList.push({ url: x })
+          })
+        }
         this.open = true
         this.title = '修改店铺商品'
       })
@@ -322,6 +378,9 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.goodsId != null) {
+            this.form.imageList = this.form.imageList.map((x) => {
+              return x.url
+            })
             updateShopGoods(this.form).then(response => {
               this.$modal.msgSuccess('修改成功')
               this.open = false
