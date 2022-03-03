@@ -387,6 +387,9 @@ export default {
               this.getList()
             })
           } else {
+            this.form.imageList = this.form.imageList.map((x) => {
+              return x.url
+            })
             addShopGoods(this.form).then(response => {
               this.$modal.msgSuccess('新增成功')
               this.open = false
