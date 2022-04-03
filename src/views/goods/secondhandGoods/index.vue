@@ -207,8 +207,19 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="用户ID" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户ID"/>
+        <el-form-item v-if="form.imageList" class="upload-cover" label="商品图片" prop="icon" ref="uploadmenuLogo">
+          <!--          <el-dialog>-->
+          <!--            <img :src="" alt="">-->
+          <!--            {{ form.imageList[0] }}-->
+          <el-image
+            v-for="(item,index) in  form.imageList"
+            :key="'formImageList'+index"
+            style="width: 100px; height: 100px"
+            :src="item"
+            :preview-src-list="form.imageList"
+          >
+          </el-image>
+          <!--          </el-dialog>-->
         </el-form-item>
         <el-form-item label="手机号码" prop="phonenumber">
           <el-input v-model="form.phonenumber" placeholder="请输入手机号码"/>
@@ -390,7 +401,8 @@ export default {
         createTime: null,
         updateBy: null,
         updateTime: null,
-        remark: null
+        remark: null,
+        imageList: []
       }
       this.resetForm('form')
     },
