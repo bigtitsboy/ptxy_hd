@@ -137,11 +137,11 @@
     <el-table v-loading="loading" :data="rentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="租房ID" align="center" prop="houseId" />
-      <el-table-column label="租房名称" align="center" prop="goodsName" />
+      <el-table-column label="小区名称" align="center" prop="goodsName" />
       <el-table-column label="租房描述" align="center" prop="houseContent" />
       <el-table-column label="租房价格" align="center" prop="housePrice" />
       <el-table-column label="出租方式" align="center" prop="rentWay" />
-      <el-table-column label="租房地址" align="center" prop="houseAddress" />
+      <el-table-column label="户型" align="center" prop="houseAddress" />
       <el-table-column label="租房面积" align="center" prop="houseArea" />
       <el-table-column label="用户ID" align="center" prop="userId" />
       <el-table-column label="手机号码" align="center" prop="phonenumber" />
@@ -168,7 +168,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -192,7 +192,7 @@
         <el-form-item label="出租方式" prop="rentWay">
           <el-input v-model="form.rentWay" placeholder="请输入出租方式" />
         </el-form-item>
-        <el-form-item label="租房地址" prop="houseAddress">
+        <el-form-item label="户型" prop="houseAddress">
           <el-input v-model="form.houseAddress" placeholder="请输入租房地址" />
         </el-form-item>
         <el-form-item label="租房面积" prop="houseArea">
